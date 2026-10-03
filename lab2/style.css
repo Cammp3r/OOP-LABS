@@ -1,0 +1,83 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#menubar {
+    display: flex;
+    background: #f0f0f0;
+    border-bottom: 1px solid #aaa;
+}
+
+.menu {
+    position: relative;
+}
+
+.menu button {
+    border: none;
+    background: transparent;
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.menu-title:hover,
+.menu.open .menu-title {
+    background: #cde6f7;
+}
+
+.menu-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid #888;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.menu.open .menu-popup {
+    display: block;
+}
+
+.menu-popup button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 26px;
+    position: relative;
+}
+
+.menu-popup button:hover {
+    background: #cde6f7;
+}
+
+.menu-popup button.checked::before {
+    content: '✓';
+    position: absolute;
+    left: 8px;
+}
+
+#canvas {
+    flex: 1;
+    background: #fff;
+    cursor: crosshair;
+    min-height: 0;
+}
+
+#status {
+    padding: 3px 10px;
+    font-size: 12px;
+    background: #f0f0f0;
+    border-top: 1px solid #aaa;
+}

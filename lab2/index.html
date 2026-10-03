@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav id="menubar">
+        <div class="menu">
+            <button class="menu-title">Файл</button>
+            <div class="menu-popup">
+                <button id="miClear">Очистити</button>
+            </div>
+        </div>
+        <div class="menu" id="menuObjects">
+            <button class="menu-title">Об'єкти</button>
+            <div class="menu-popup">
+                <button data-shape="point">Крапка</button>
+                <button data-shape="line">Лінія</button>
+                <button data-shape="rect">Прямокутник</button>
+                <button data-shape="ellipse">Еліпс</button>
+            </div>
+        </div>
+        <div class="menu">
+            <button class="menu-title">Довідка</button>
+            <div class="menu-popup">
+                <button id="miAbout">Про програму</button>
+            </div>
+        </div>
+    </nav>
+
+    <canvas id="canvas"></canvas>
+    <div id="status"></div>
+
+    <script type="module" src="index.js"></script>
+</body>
+</html>

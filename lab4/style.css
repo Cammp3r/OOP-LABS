@@ -1,0 +1,151 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#menubar {
+    display: flex;
+    background: #f0f0f0;
+    border-bottom: 1px solid #aaa;
+}
+
+.menu {
+    position: relative;
+}
+
+.menu button {
+    border: none;
+    background: transparent;
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.menu-title:hover,
+.menu.open .menu-title {
+    background: #cde6f7;
+}
+
+.menu-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid #888;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.menu.open .menu-popup {
+    display: block;
+}
+
+.menu-popup button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 26px;
+    position: relative;
+}
+
+.menu-popup button:hover {
+    background: #cde6f7;
+}
+
+.menu-popup button.checked::before {
+    content: '✓';
+    position: absolute;
+    left: 8px;
+}
+
+#canvas {
+    flex: 1;
+    background: #fff;
+    cursor: crosshair;
+    min-height: 0;
+}
+
+#status {
+    padding: 3px 10px;
+    font-size: 12px;
+    background: #f0f0f0;
+    border-top: 1px solid #aaa;
+}
+
+#titlebar {
+    padding: 4px 10px;
+    font-size: 13px;
+    background: #2b579a;
+    color: #fff;
+}
+
+#toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 4px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #aaa;
+}
+
+.tb-button {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    color: #222;
+    cursor: pointer;
+}
+
+.tb-button svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tb-button:hover {
+    background: #cde6f7;
+    border-color: #7eb4ea;
+}
+
+.tb-button.pressed {
+    background: #b8d6f0;
+    border-color: #3c7fb1;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.tb-separator {
+    width: 1px;
+    height: 24px;
+    margin: 0 4px;
+    background: #aaa;
+}
+
+.tooltip {
+    position: fixed;
+    padding: 2px 6px;
+    font-size: 12px;
+    background: #ffffe1;
+    border: 1px solid #767676;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 20;
+    display: none;
+}
+
+.tooltip.visible {
+    display: block;
+}

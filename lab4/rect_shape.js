@@ -1,6 +1,11 @@
 import { Shape } from './shape.js';
 
 export class RectShape extends Shape {
+    constructor() {
+        super();
+        this.fillColor = '#90ee90';
+    }
+
     trace(ctx) {
         const left = Math.min(this.xs, this.xe);
         const top = Math.min(this.ys, this.ye);
@@ -11,12 +16,14 @@ export class RectShape extends Shape {
 
     show(ctx) {
         ctx.save();
-        ctx.fillStyle = '#90ee90';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1;
         ctx.beginPath();
         this.trace(ctx);
-        ctx.fill();
+        if (this.fillColor) {
+            ctx.fillStyle = this.fillColor;
+            ctx.fill();
+        }
         ctx.stroke();
         ctx.restore();
     }

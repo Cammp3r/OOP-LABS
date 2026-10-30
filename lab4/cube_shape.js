@@ -8,6 +8,9 @@ export class CubeShape extends Shape {
     constructor() {
         super();
         this.front = new RectShape();
+        this.back = new RectShape();
+        this.front.fillColor = null;
+        this.back.fillColor = null;
         this.edges = Array.from({ length: 4 }, () => new LineShape());
     }
 
@@ -28,6 +31,7 @@ export class CubeShape extends Shape {
 
     show(ctx) {
         this.front.show(ctx);
+        this.back.show(ctx);
         for (const edge of this.edges) {
             edge.show(ctx);
         }
@@ -40,6 +44,7 @@ export class CubeShape extends Shape {
         ctx.setLineDash([5, 4]);
         ctx.beginPath();
         this.front.trace(ctx);
+        this.back.trace(ctx);
         for (const edge of this.edges) {
             edge.trace(ctx);
         }
@@ -70,6 +75,8 @@ export class CubeShape extends Shape {
 
         this.front.setStart(left, top);
         this.front.setEnd(right, bottom);
+        this.back.setStart(backLeft, backTop);
+        this.back.setEnd(backRight, backBottom);
 
         const points = [
             [left, top, backLeft, backTop],

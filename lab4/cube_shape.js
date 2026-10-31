@@ -44,7 +44,7 @@ export class CubeShape extends Shape {
 
     showRubber(ctx) {
         ctx.save();
-        ctx.strokeStyle = '#0066ff';
+        ctx.strokeStyle = 'darkblue';
         ctx.lineWidth = 1;
         ctx.setLineDash([5, 4]);
         ctx.beginPath();

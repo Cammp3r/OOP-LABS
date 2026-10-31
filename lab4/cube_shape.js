@@ -11,7 +11,12 @@ export class CubeShape extends Shape {
         this.back = new RectShape();
         this.front.fillColor = null;
         this.back.fillColor = null;
-        this.edges = Array.from({ length: 4 }, () => new LineShape());
+        this.edges = [
+            new LineShape(),
+            new LineShape(),
+            new LineShape(),
+            new LineShape()
+        ];
     }
 
     setStart(x, y) {

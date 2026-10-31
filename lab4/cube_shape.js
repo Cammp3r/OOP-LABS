@@ -3,7 +3,7 @@ import { LineShape } from './line_shape.js';
 import { RectShape } from './rect_shape.js';
 
 export class CubeShape extends Shape {
-    static OFFSET = 18;
+    static OFFSET = 20;
 
     constructor() {
         super();

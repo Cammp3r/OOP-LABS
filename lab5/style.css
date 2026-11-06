@@ -1,0 +1,253 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#menubar {
+    display: flex;
+    background: #f0f0f0;
+    border-bottom: 1px solid #aaa;
+}
+
+.menu {
+    position: relative;
+}
+
+.menu button {
+    border: none;
+    background: transparent;
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.menu-title:hover,
+.menu.open .menu-title {
+    background: #cde6f7;
+}
+
+.menu-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid #888;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.menu.open .menu-popup {
+    display: block;
+}
+
+.menu-popup button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 26px;
+    position: relative;
+}
+
+.menu-popup button:hover {
+    background: #cde6f7;
+}
+
+.menu-popup button.checked::before {
+    content: '✓';
+    position: absolute;
+    left: 8px;
+}
+
+ #workspace {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #d7dce3;
+    min-height: 0;
+}
+
+.document-window {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 70%;
+    height: 70%;
+    box-sizing: border-box;
+    padding: 0;
+    background: #fff;
+    border: 1px solid #777;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.document-window.active {
+    border: 2px solid #2b579a;
+}
+
+.document-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 24px;
+    padding: 0 5px 0 8px;
+    color: #fff;
+    background: #777;
+    font-size: 12px;
+}
+
+.document-window.active .document-titlebar {
+    background: #2b579a;
+}
+
+.document-close,
+.dialog-close {
+    border: 0;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.document-canvas {
+    display: block;
+    width: 100%;
+    height: calc(100% - 24px);
+    cursor: crosshair;
+    background: #fff;
+}
+
+#table {
+    position: absolute;
+    right: 12px;
+    bottom: 30px;
+    z-index: 30;
+}
+
+.table-dialog {
+    display: none;
+    width: 430px;
+    max-height: 280px;
+    background: #fff;
+    border: 1px solid #777;
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.35);
+}
+
+.table-dialog.visible {
+    display: block;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 8px;
+    color: #fff;
+    background: #2b579a;
+}
+
+.table-scroll {
+    max-height: 240px;
+    overflow: auto;
+}
+
+.table-dialog table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.table-dialog th,
+.table-dialog td {
+    padding: 4px 6px;
+    border: 1px solid #bbb;
+    text-align: left;
+}
+
+.table-dialog th {
+    background: #e8eef5;
+}
+
+#status {
+    padding: 3px 10px;
+    font-size: 12px;
+    background: #f0f0f0;
+    border-top: 1px solid #aaa;
+}
+
+#titlebar {
+    padding: 4px 10px;
+    font-size: 13px;
+    background: #2b579a;
+    color: #fff;
+}
+
+#toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 4px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #aaa;
+}
+
+.tb-button {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    color: #222;
+    cursor: pointer;
+}
+
+.tb-button svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tb-button:hover {
+    background: #cde6f7;
+    border-color: #7eb4ea;
+}
+
+.tb-button.pressed {
+    background: #b8d6f0;
+    border-color: #3c7fb1;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.tb-separator {
+    width: 1px;
+    height: 24px;
+    margin: 0 4px;
+    background: #aaa;
+}
+
+.tooltip {
+    position: fixed;
+    padding: 2px 6px;
+    font-size: 12px;
+    background: #ffffe1;
+    border: 1px solid #767676;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 20;
+    display: none;
+}
+
+.tooltip.visible {
+    display: block;
+}

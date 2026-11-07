@@ -27,6 +27,17 @@ export class Shape {
         throw new Error('show() має бути перевизначений у нащадку');
     }
 
+    showSelection(ctx) {
+        ctx.save();
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([7, 3]);
+        ctx.beginPath();
+        this.trace(ctx);
+        ctx.stroke();
+        ctx.restore();
+    }
+
     showRubber(ctx) {
         ctx.save();
         ctx.strokeStyle = '#0066ff';

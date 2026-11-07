@@ -4,12 +4,9 @@ import { MainMenu } from './menu.js';
 import { TableDialog } from './table_dialog.js';
 import { TOOLS, findTool } from './tools.js';
 
-const CMD_NEW = 'new';
 const CMD_CLEAR = 'clear';
 const CMD_TABLE = 'table';
 const CMD_SAVE = 'save';
-const CMD_TILE = 'tile';
-const CMD_CASCADE = 'cascade';
 const CMD_ABOUT = 'about';
 
 export class MainWindow {
@@ -17,10 +14,14 @@ export class MainWindow {
         this.statusEl = status;
         this.workspace = workspace;
         this.editor = MyEditor.getInstance();
-        this.documents = [];
-        this.activeDocument = null;
-        this.nextTitle = 1;
+        this.document = null;
         this.table = new TableDialog(table);
+        this.table.onSelect = (index) => {
+            if (this.table.documentId) {
+                this.editor.select(this.table.documentId, index);
+                this.table.setSelected(index);
+            }
+        };
         this.menu = new MainMenu(menubar, this);
         this.toolbar = new Toolbar(toolbar, this);
         this.onSize = this.onSize.bind(this);
@@ -29,14 +30,9 @@ export class MainWindow {
 
     onCreate() {
         this.menu.addMenu('Файл', [
-            { id: CMD_NEW, text: 'Нове вікно' },
             { id: CMD_CLEAR, text: 'Очистити' },
             { id: CMD_TABLE, text: 'Таблиця об’єктів' },
             { id: CMD_SAVE, text: 'Зберегти CSV' }
-        ]);
-        this.menu.addMenu('Вікно', [
-            { id: CMD_TILE, text: 'Розташувати плиткою' },
-            { id: CMD_CASCADE, text: 'Каскадом' }
         ]);
         this.menu.addMenu('Об’єкти', TOOLS.map((tool) => ({
             id: tool.id,
@@ -44,102 +40,54 @@ export class MainWindow {
         })));
         this.menu.addMenu('Довідка', [{ id: CMD_ABOUT, text: 'Про програму' }]);
 
-        this.toolbar.addButton(CMD_NEW, '+');
         this.toolbar.addButton(CMD_CLEAR, '×');
         this.toolbar.addSeparator();
         TOOLS.forEach((tool) => this.toolbar.addButton(tool.id, tool.icon));
 
-        this.createDocument();
-        this.setStatus('Створено багатовіконний редактор. Оберіть інструмент.');
+        this.initializeDocument();
+        this.setStatus('Оберіть інструмент і намалюйте об’єкт');
     }
 
-    createDocument() {
+    initializeDocument() {
         const panel = document.createElement('section');
-        panel.className = 'document-window';
+        panel.className = 'document-window active';
         panel.innerHTML = `
             <header class="document-titlebar">
-                <span></span>
-                <button type="button" class="document-close" aria-label="Закрити">×</button>
+                <span>Графічний редактор</span>
             </header>
             <canvas class="document-canvas"></canvas>
         `;
         const canvas = panel.querySelector('canvas');
-        const title = panel.querySelector('span');
-        const item = {
-            id: null,
+        this.document = {
+            id: this.editor.createDocument(
+                canvas,
+                (message) => this.setStatus(message),
+                () => this.onDocumentChanged()
+            ),
             panel,
-            canvas,
-            title: `Документ ${this.nextTitle++}`,
             shapeTool: null
         };
-        title.textContent = item.title;
-        item.id = this.editor.createDocument(
-            canvas,
-            (message) => this.setStatus(message),
-            () => this.onDocumentChanged(item)
-        );
-        panel.addEventListener('pointerdown', () => this.activateDocument(item));
-        panel.querySelector('.document-close').addEventListener(
-            'click',
-            (event) => {
-                event.stopPropagation();
-                this.closeDocument(item);
-            }
-        );
         this.workspace.appendChild(panel);
-        this.documents.push(item);
-        this.activateDocument(item);
-        requestAnimationFrame(() => this.editor.resize(item.id));
+        requestAnimationFrame(() => this.editor.resize(this.document.id));
     }
 
-    closeDocument(item) {
-        if (this.documents.length === 1) {
-            this.setStatus('Неможливо закрити останнє вікно');
-            return;
-        }
-        this.editor.destroyDocument(item.id);
-        item.panel.remove();
-        this.documents = this.documents.filter((entry) => entry !== item);
-        if (this.activeDocument === item) {
-            this.activateDocument(this.documents[this.documents.length - 1]);
-        }
-    }
-
-    activateDocument(item) {
-        this.activeDocument = item;
-        for (const entry of this.documents) {
-            entry.panel.classList.toggle('active', entry === item);
-        }
-        if (this.table.documentId && this.table.documentId !== item.id) {
-            this.table.close();
-        }
-        if (item.shapeTool) {
-            this.toolbar.setPressed(item.shapeTool.id);
-        }
-        this.onDocumentChanged(item);
-    }
-
-    onDocumentChanged(item) {
-        if (this.activeDocument === item && this.table.documentId === item.id) {
-            this.table.update(this.editor.getShapes(item.id));
+    onDocumentChanged() {
+        if (this.table.documentId === this.document.id) {
+            this.table.update(this.editor.getShapes(this.document.id));
         }
     }
 
     onCommand(id) {
-        if (id === CMD_NEW) {
-            this.createDocument();
-            return;
-        }
-        if (!this.activeDocument) return;
+        if (!this.document) return;
         if (id === CMD_CLEAR) {
-            this.editor.clear(this.activeDocument.id);
-            this.setStatus('Поточний документ очищено');
+            this.editor.clear(this.document.id);
+            this.setStatus('Документ очищено');
             return;
         }
         if (id === CMD_TABLE) {
             this.table.show(
-                this.activeDocument.id,
-                this.editor.getShapes(this.activeDocument.id)
+                this.document.id,
+                this.editor.getShapes(this.document.id)
             );
             return;
         }
@@ -147,22 +95,14 @@ export class MainWindow {
             this.saveCsv();
             return;
         }
-        if (id === CMD_TILE) {
-            this.tileDocuments();
-            return;
-        }
-        if (id === CMD_CASCADE) {
-            this.cascadeDocuments();
-            return;
-        }
         if (id === CMD_ABOUT) {
-            alert('Lab5 — багатовіконний графічний редактор об’єктів');
+            alert('Lab5 — графічний редактор об’єктів');
             return;
         }
         const tool = findTool(id);
         if (tool) {
-            this.activeDocument.shapeTool = tool;
-            this.editor.start(this.activeDocument.id, tool.shapeClass);
+            this.document.shapeTool = tool;
+            this.editor.start(this.document.id, tool.shapeClass);
             this.toolbar.setPressed(tool.id);
             this.setStatus(`Обрано: ${tool.name}`);
         }
@@ -170,49 +110,23 @@ export class MainWindow {
 
     onNotify(notification) {
         if (notification.code !== 'TTN_NEEDTEXT') return null;
-        if (notification.id === CMD_NEW) return 'Нове вікно';
         if (notification.id === CMD_CLEAR) return 'Очистити';
         return findTool(notification.id)?.name ?? null;
     }
 
     onInitMenuPopup() {}
 
-    tileDocuments() {
-        const columns = Math.ceil(Math.sqrt(this.documents.length));
-        const rows = Math.ceil(this.documents.length / columns);
-        this.documents.forEach((item, index) => {
-            item.panel.style.left = `${(index % columns) * (100 / columns)}%`;
-            item.panel.style.top = `${Math.floor(index / columns) * (100 / rows)}%`;
-            item.panel.style.width = `${100 / columns}%`;
-            item.panel.style.height = `${100 / rows}%`;
-        });
-        this.setStatus('Вікна розташовано плиткою');
-    }
-
-    cascadeDocuments() {
-        this.documents.forEach((item, index) => {
-            item.panel.style.left = `${index * 28}px`;
-            item.panel.style.top = `${index * 28}px`;
-            item.panel.style.width = '70%';
-            item.panel.style.height = '70%';
-        });
-        this.setStatus('Вікна розташовано каскадом');
-    }
-
     saveCsv() {
-        const rows = ['Документ,Назва,x1,y1,x2,y2'];
-        for (const item of this.documents) {
-            for (const shape of this.editor.getShapes(item.id)) {
-                const tool = TOOLS.find((entry) => shape.constructor === entry.shapeClass);
-                rows.push([
-                    item.title,
-                    tool?.name ?? shape.constructor.name,
-                    shape.xs,
-                    shape.ys,
-                    shape.xe,
-                    shape.ye
-                ].join(','));
-            }
+        const rows = ['Назва,x1,y1,x2,y2'];
+        for (const shape of this.editor.getShapes(this.document.id)) {
+            const tool = TOOLS.find((entry) => shape.constructor === entry.shapeClass);
+            rows.push([
+                tool?.name ?? shape.constructor.name,
+                shape.xs,
+                shape.ys,
+                shape.xe,
+                shape.ye
+            ].join(','));
         }
         const link = document.createElement('a');
         link.href = URL.createObjectURL(new Blob(
@@ -226,8 +140,8 @@ export class MainWindow {
     }
 
     onSize() {
-        for (const item of this.documents) {
-            this.editor.resize(item.id);
+        if (this.document) {
+            this.editor.resize(this.document.id);
         }
     }
 

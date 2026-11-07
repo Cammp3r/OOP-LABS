@@ -27,4 +27,5 @@ export class EllipseShape extends Shape {
         ctx.stroke();
         ctx.restore();
     }
+
 }

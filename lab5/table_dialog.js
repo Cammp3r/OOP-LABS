@@ -6,6 +6,7 @@ export class TableDialog {
         this.rows = [];
         this.documentId = null;
         this.onClose = () => {};
+        this.onSelect = () => {};
         this.element = document.createElement('section');
         this.element.className = 'table-dialog';
         this.element.setAttribute('role', 'dialog');
@@ -39,8 +40,17 @@ export class TableDialog {
     update(shapes) {
         this.rows = shapes;
         this.tbody.replaceChildren();
-        for (const shape of shapes) {
+        shapes.forEach((shape, index) => {
             const row = document.createElement('tr');
+            row.tabIndex = 0;
+            row.setAttribute('role', 'button');
+            row.addEventListener('click', () => this.onSelect(index));
+            row.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    this.onSelect(index);
+                }
+            });
             const tool = TOOLS.find((item) => shape.constructor === item.shapeClass);
             const values = [
                 tool?.name ?? shape.constructor.name,
@@ -55,7 +65,15 @@ export class TableDialog {
                 row.appendChild(cell);
             }
             this.tbody.appendChild(row);
-        }
+        });
+    }
+
+    setSelected(index) {
+        [...this.tbody.rows].forEach((row, rowIndex) => {
+            const selected = rowIndex === index;
+            row.classList.toggle('selected', selected);
+            row.setAttribute('aria-selected', String(selected));
+        });
     }
 
     close() {

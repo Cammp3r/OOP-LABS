@@ -25,8 +25,9 @@ export class LineCirclesShape extends Shape {
     }
 
     trace(ctx) {
-        ctx.moveTo(this.xs, this.ys);
-        ctx.lineTo(this.xe, this.ye);
+        this.line.trace(ctx);
+        this.startCircle.trace(ctx);
+        this.endCircle.trace(ctx);
     }
 
     show(ctx) {

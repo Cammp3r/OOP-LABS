@@ -30,8 +30,11 @@ export class CubeShape extends Shape {
     }
 
     trace(ctx) {
-        const [left, top, right, bottom] = this.#bounds();
-        ctx.rect(left, top, right - left, bottom - top);
+        this.front.trace(ctx);
+        this.back.trace(ctx);
+        for (const edge of this.edges) {
+            edge.trace(ctx);
+        }
     }
 
     show(ctx) {

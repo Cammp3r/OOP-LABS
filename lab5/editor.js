@@ -12,7 +12,7 @@ export class MyEditor {
 
     constructor() {
         if (MyEditor.#instance) {
-            throw new TypeError('MyEditor є Singleton і вже створений');
+            throw new TypeError('MyEditor вже створений');
         }
         this.documents = new Map();
         this.nextDocumentId = 1;
@@ -25,6 +25,7 @@ export class MyEditor {
             canvas,
             ctx: canvas.getContext('2d'),
             shapes: [],
+            selectedIndex: null,
             shapeClass: null,
             current: null,
             onMessage,
@@ -68,6 +69,7 @@ export class MyEditor {
         const document = this.#getDocument(id);
         document.shapes = [];
         document.current = null;
+        document.selectedIndex = null;
         this.paint(id);
         document.onChange();
     }
@@ -86,9 +88,24 @@ export class MyEditor {
         for (const shape of document.shapes) {
             shape.show(ctx);
         }
+        if (
+            document.selectedIndex !== null
+            && document.shapes[document.selectedIndex]
+        ) {
+            document.shapes[document.selectedIndex].showSelection(ctx);
+        }
         if (document.current) {
             document.current.showRubber(ctx);
         }
+    }
+
+    select(id, index) {
+        const document = this.#getDocument(id);
+        if (!Number.isInteger(index) || index < 0 || index >= document.shapes.length) {
+            throw new RangeError(`Некоректний індекс об’єкта: ${index}`);
+        }
+        document.selectedIndex = index;
+        this.paint(id);
     }
 
     getShapes(id) {
